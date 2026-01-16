@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Typing Tutor - Master Hiragana, Katakana & Romaji</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .floating-chars {
+            position: absolute;
+            font-size: 4em;
+            opacity: 0.1;
+            color: white;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .char1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .char2 { top: 20%; right: 15%; animation-delay: 1s; }
+        .char3 { bottom: 15%; left: 20%; animation-delay: 2s; }
+        .char4 { bottom: 25%; right: 10%; animation-delay: 3s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            text-align: center;
+            animation: fadeInUp 1s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 4em;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 2px 4px 8px rgba(0,0,0,0.3);
+            line-height: 1.2;
+        }
+
+        .japanese-title {
+            font-size: 2.5em;
+            color: #fbbf24;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+        }
+
+        .tagline {
+            font-size: 1.5em;
+            color: rgba(255,255,255,0.95);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .feature-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .feature-icon {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+        }
+
+        .feature-box h3 {
+            color: white;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+        }
+
+        .feature-box p {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+
+        .cta-container {
+            margin-top: 60px;
+        }
+
+        .launch-button {
+            display: inline-block;
+            padding: 25px 60px;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #1e3a8a;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.5em;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(251, 191, 36, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .launch-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 50px rgba(251, 191, 36, 0.6);
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        }
+
+        .typing-demo {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 50px auto;
+            max-width: 800px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .typing-display {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            color: #1e3a8a;
+            font-weight: bold;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1em;
+            background: #3b82f6;
+            animation: blink 1s infinite;
+            margin-left: 5px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .keyboard-hint {
+            color: white;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .japanese-title {
+                font-size: 1.8em;
+            }
+
+            .tagline {
+                font-size: 1.2em;
+            }
+
+            .launch-button {
+                padding: 20px 40px;
+                font-size: 1.2em;
+            }
+
+            .typing-display {
+                font-size: 1.8em;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-chars char1">あ</div>
+    <div class="floating-chars char2">カ</div>
+    <div class="floating-chars char3">ひ</div>
+    <div class="floating-chars char4">タ</div>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Japanese Typing Tutor</h1>
+            <div class="japanese-title">日本語タイピング練習</div>
+            <p class="tagline">Master Hiragana, Katakana, and Romaji typing<br>Build speed, accuracy, and confidence</p>
+
+            <div class="typing-demo">
+                <div class="typing-display">
+                    <span id="demo-text">こんにちは</span>
+                    <span class="cursor"></span>
+                </div>
+                <p class="keyboard-hint">Learn to type naturally in Japanese</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-box">
+                    <div class="feature-icon">⌨️</div>
+                    <h3>Interactive Lessons</h3>
+                    <p>Progressive exercises from basic characters to full sentences with real-time feedback</p>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon">📊</div>
+                    <h3>Track Progress</h3>
+                    <p>Monitor your typing speed, accuracy, and improvement over time with detailed analytics</p>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Adaptive Learning</h3>
+                    <p>Personalized difficulty that adjusts to your skill level and focuses on challenging characters</p>
+                </div>
+
+                <div class="feature-box">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Achievement System</h3>
+                    <p>Earn badges and certificates as you master different character sets and speed milestones</p>
+                </div>
+            </div>
+
+            <div class="cta-container">
+                <a href="#" class="launch-button" onclick="launchApp(event)">Launch Now</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const phrases = [
+            'こんにちは',
+            'ありがとう',
+            'カタカナ',
+            'ひらがな',
+            'おはよう',
+            'さようなら'
+        ];
+        
+        let currentIndex = 0;
+        const demoText = document.getElementById('demo-text');
+        
+        function rotateText() {
+            demoText.style.opacity = '0';
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % phrases.length;
+                demoText.textContent = phrases[currentIndex];
+                demoText.style.opacity = '1';
+            }, 300);
+        }
+        
+        demoText.style.transition = 'opacity 0.3s ease';
+        setInterval(rotateText, 3000);
+
+        function launchApp(e) {
+            e.preventDefault();
+            alert('Launching Japanese Typing Tutor...\n\nThe typing tutor application would open here.');
+            // In a real implementation, this would navigate to the typing tutor app
+            // window.location.href = '/typing-tutor-app';
+        }
+    </script>
+</body>
+</html>

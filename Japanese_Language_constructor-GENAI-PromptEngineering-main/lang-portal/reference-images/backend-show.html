@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Typing Tutor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 0 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 5px;
+            list-style: none;
+        }
+
+        .nav-links button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 1em;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .nav-links button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-links button.active {
+            background: rgba(255,255,255,0.2);
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #1e3a8a;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #3b82f6;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 1.1em;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .activity-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-5px);
+            border-color: #3b82f6;
+            box-shadow: 0 8px 25px rgba(59,130,246,0.2);
+        }
+
+        .activity-card h3 {
+            color: #1e3a8a;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .activity-card p {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .difficulty.easy { background: #d1fae5; color: #065f46; }
+        .difficulty.medium { background: #fef3c7; color: #92400e; }
+        .difficulty.hard { background: #fee2e2; color: #991b1b; }
+
+        .word-list {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .word-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.2s ease;
+        }
+
+        .word-item:hover {
+            background: #f8fafc;
+        }
+
+        .word-item:last-child {
+            border-bottom: none;
+        }
+
+        .word-japanese {
+            font-size: 1.8em;
+            color: #1e3a8a;
+            font-weight: bold;
+        }
+
+        .word-romaji {
+            color: #64748b;
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+
+        .word-english {
+            color: #475569;
+            font-size: 1.1em;
+        }
+
+        .group-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .group-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .group-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .group-card h3 {
+            color: #1e3a8a;
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+
+        .group-card .word-count {
+            color: #64748b;
+            font-size: 0.95em;
+        }
+
+        .session-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .session-info h3 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+
+        .session-meta {
+            color: #64748b;
+            font-size: 0.95em;
+        }
+
+        .session-stats {
+            text-align: right;
+        }
+
+        .session-stats .score {
+            font-size: 2em;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        .settings-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .settings-section h2 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            font-size: 1.1em;
+            color: #334155;
+        }
+
+        .setting-description {
+            color: #64748b;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .toggle {
+            width: 60px;
+            height: 30px;
+            background: #cbd5e1;
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle.active {
+            background: #3b82f6;
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: left 0.3s ease;
+        }
+
+        .toggle.active::after {
+            left: 33px;
+        }
+
+        select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 0;
+            }
+            
+            .nav-links button {
+                padding: 12px 10px;
+                font-size: 0.85em;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">日本語 Typing Tutor</div>
+            <ul class="nav-links">
+                <li><button onclick="showPage('dashboard')" class="active">Dashboard</button></li>
+                <li><button onclick="showPage('activities')">Study Activities</button></li>
+                <li><button onclick="showPage('words')">Words</button></li>
+                <li><button onclick="showPage('groups')">Word Groups</button></li>
+                <li><button onclick="showPage('sessions')">Sessions</button></li>
+                <li><button onclick="showPage('settings')">Settings</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page active">
+            <h1>Dashboard</h1>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">WPM Average</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-value">94%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-value">247</div>
+                    <div class="stat-label">Words Learned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+            </div>
+
+            <h2 style="color: #1e3a8a; margin-bottom: 20px;">Recent Progress</h2>
+            <div class="session-card">
+                <div class="session-info">
+                    <h3>Hiragana Basics</h3>
+                    <div class="session-meta">Completed 2 hours ago</div>
+                </div>
+                <div class="session-stats">
+                    <div class="score">92%</div>
+                    <div class="session-meta">48 WPM</div>
+                </div>
+            </div>
+            <div class="session-card">
+                <div class="session-info">
+                    <h3>Common Phrases</h3>
+                    <div class="session-meta">Completed yesterday</div>
+                </div>
+                <div class="session-stats">
+                    <div class="score">88%</div>
+                    <div class="session-meta">42 WPM</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Activities Page -->
+        <div id="activities" class="page">
+            <h1>Study Activities</h1>
+            <div class="activity-grid">
+                <div class="activity-card">
+                    <h3>🔤 Hiragana Practice</h3>
+                    <p>Master all 46 hiragana characters with guided typing exercises</p>
+                    <span class="difficulty easy">Beginner</span>
+                </div>
+                <div class="activity-card">
+                    <h3>🔠 Katakana Practice</h3>
+                    <p>Learn katakana characters used for foreign words and names</p>
+                    <span class="difficulty easy">Beginner</span>
+                </div>
+                <div class="activity-card">
+                    <h3>✍️ Romaji to Hiragana</h3>
+                    <p>Convert romanized Japanese to hiragana characters</p>
+                    <span class="difficulty medium">Intermediate</span>
+                </div>
+                <div class="activity-card">
+                    <h3>💬 Common Phrases</h3>
+                    <p>Type everyday Japanese expressions and greetings</p>
+                    <span class="difficulty medium">Intermediate</span>
+                </div>
+                <div class="activity-card">
+                    <h3>📖 Sentence Practice</h3>
+                    <p>Build fluency with full sentence typing exercises</p>
+                    <span class="difficulty hard">Advanced</span>
+                </div>
+                <div class="activity-card">
+                    <h3>⚡ Speed Challenge</h3>
+                    <p>Test your typing speed with timed challenges</p>
+                    <span class="difficulty hard">Advanced</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Words Page -->
+        <div id="words" class="page">
+            <h1>Words</h1>
+            <div class="word-list">
+                <div class="word-item">
+                    <div>
+                        <div class="word-japanese">こんにちは</div>
+                        <div class="word-romaji">konnichiwa</div>
+                    </div>
+                    <div class="word-english">Hello</div>
+                </div>
+                <div class="word-item">
+                    <div>
+                        <div class="word-japanese">ありがとう</div>
+                        <div class="word-romaji">arigatou</div>
+                    </div>
+                    <div class="word-english">Thank you</div>
+                </div>
+                <div class="word-item">
+                    <div>
+                        <div class="word-japanese">おはよう</div>
+                        <div class="word-romaji">ohayou</div>
+                    </div>
+                    <div class="word-english">Good morning</div>
+                </div>
+                <div class="word-item">
+                    <div>
+                        <div class="word-japanese">さようなら</div>
+                        <div class="word-romaji">sayounara</div>
+                    </div>
+                    <div class="word-english">Goodbye</div>
+                </div>
+                <div class="word-item">
+                    <div>
+                        <div class="word-japanese">すみません</div>
+                        <div class="word-romaji">sumimasen</div>
+                    </div>
+                    <div class="word-english">Excuse me</div>
+                </div>
+                <div class="word-item">
+                    <div>
+                        <div class="word-japanese">はい</div>
+                        <div class="word-romaji">hai</div>
+                    </div>
+                    <div class="word-english">Yes</div>
+                </div>
+                <div class="word-item">
+                    <div>
+                        <div class="word-japanese">いいえ</div>
+                        <div class="word-romaji">iie</div>
+                    </div>
+                    <div class="word-english">No</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Word Groups Page -->
+        <div id="groups" class="page">
+            <h1>Word Groups</h1>
+            <div class="group-grid">
+                <div class="group-card">
+                    <h3>📝 Basic Greetings</h3>
+                    <p class="word-count">12 words</p>
+                </div>
+                <div class="group-card">
+                    <h3>🍱 Food & Dining</h3>
+                    <p class="word-count">24 words</p>
+                </div>
+                <div class="group-card">
+                    <h3>🏠 Family Members</h3>
+                    <p class="word-count">15 words</p>
+                </div>
+                <div class="group-card">
+                    <h3>🔢 Numbers</h3>
+                    <p class="word-count">30 words</p>
+                </div>
+                <div class="group-card">
+                    <h3>📅 Days & Time</h3>
+                    <p class="word-count">20 words</p>
+                </div>
+                <div class="group-card">
+                    <h3>🎨 Colors</h3>
+                    <p class="word-count">10 words</p>
+                </div>
+                <div class="group-card">
+                    <h3>🌍 Travel Phrases</h3>
+                    <p class="word-count">18 words</p>
+                </div>
+                <div class="group-card">
+                    <h3>💼 Business Terms</h3>
+                    <p class="word-count">22 words</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sessions Page -->
+        <div id="sessions" class="page">
+            <h1>Practice Sessions</h1>
+            <div class="session-card">
+                <div class="session-info">
+                    <h3>Hiragana Basics</h3>
+                    <div class="session-meta">December 21, 2025 at 2:30 PM</div>
+                </div>
+                <div class="session-stats">
+                    <div class="score">92%</div>
+                    <div class="session-meta">48 WPM • 15 min</div>
+                </div>
+            </div>
+            <div class="session-card">
+                <div class="session-info">
+                    <h3>Common Phrases</h3>
+                    <div class="session-meta">December 20, 2025 at 6:45 PM</div>
+                </div>
+                <div class="session-stats">
+                    <div class="score">88%</div>
+                    <div class="session-meta">42 WPM • 20 min</div>
+                </div>
+            </div>
+            <div class="session-card">
+                <div class="session-info">
+                    <h3>Katakana Practice</h3>
+                    <div class="session-meta">December 20, 2025 at 10:15 AM</div>
+                </div>
+                <div class="session-stats">
+                    <div class="score">85%</div>
+                    <div class="session-meta">39 WPM • 12 min</div>
+                </div>
+            </div>
+            <div class="session-card">
+                <div class="session-info">
+                    <h3>Speed Challenge</h3>
+                    <div class="session-meta">December 19, 2025 at 8:00 PM</div>
+                </div>
+                <div class="session-stats">
+                    <div class="score">90%</div>
+                    <div class="session-meta">45 WPM • 10 min</div>
+                </div>
+            </div>
+            <div class="session-card">
+                <div class="session-info">
+                    <h3>Hiragana Basics</h3>
+                    <div class="session-meta">December 19, 2025 at 3:20 PM</div>
+                </div>
+                <div class="session-stats">
+                    <div class="score">87%</div>
+                    <div class="session-meta">40 WPM • 18 min</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings" class="page">
+            <h1>Settings</h1>
+            
+            <div class="settings-section">
+                <h2>Display</h2>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Show Romaji</div>
+                        <div class="setting-description">Display romanized text below Japanese characters</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this)"></div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Show English Translations</div>
+                        <div class="setting-description">Display English meanings during practice</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this)"></div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Theme</div>
+                        <div class="setting-description">Choose your preferred color scheme</div>
+                    </div>
+                    <select>
+                        <option>Light</option>
+                        <option>Dark</option>
+                        <option>Auto</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>Practice</h2>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Sound Effects</div>
+                        <div class="setting-description">Play sounds for correct and incorrect typing</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this)"></div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Auto-Advance</div>
+                        <div class="setting-description">Automatically move to next word after completion</div>
+                    </div>
+                    <div class="toggle" onclick="toggleSetting(this)"></div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Difficulty Level</div>
+                        <div class="setting-description">Default difficulty for new exercises</div>
+                    </div>
+                    <select>
+                        <option>Beginner</option>
+                        <option selected>Intermediate</option>
+                        <option>Advanced</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>Notifications</h2>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Daily Reminders</div>
+                        <div class="setting-description">Remind me to practice daily</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this)"></div>
+                </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Achievement Alerts</div>
+                        <div class="setting-description">Notify me when I earn new badges</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSetting(this)"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update active nav button
+            document.querySelectorAll('.nav-links button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function toggleSetting(element) {
+            element.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
